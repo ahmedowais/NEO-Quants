@@ -2,10 +2,141 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEO-Quants</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b1020;
+      color: white;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 20px;
+      color: #cbd5e1;
+      max-width: 700px;
+      margin: 0 auto 30px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 14px 24px;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+      margin: 8px;
+    }
+    .btn.secondary {
+      background: transparent;
+      border: 1px solid #475569;
+    }
+    .section {
+      padding: 50px 0;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #111827;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid #1f2937;
+    }
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .price-card {
+      background: #111827;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid #1f2937;
+    }
+    .price {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #94a3b8;
+      border-top: 1px solid #1f2937;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
-  <h1>NEO-Quants 🚀</h1>
-  <p>Site is live.</p>
+  <div class="container hero">
+    <h1>NEO-Quants</h1>
+    <p>A modern trading education and market insights platform built for traders who want clear learning, live market tools, and smarter decisions.</p>
+    <a href="#" class="btn">Launch App</a>
+    <a href="#pricing" class="btn secondary">View Pricing</a>
+  </div>
+
+  <div class="container section">
+    <h2>What NEO-Quants Offers</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Trading Courses</h3>
+        <p>Learn futures, options, swing trading, long-term investing, and more through structured lessons.</p>
+      </div>
+      <div class="card">
+        <h3>Live Market View</h3>
+        <p>Track stocks, ETFs, futures, crypto, and market movement in one clean dashboard.</p>
+      </div>
+      <div class="card">
+        <h3>AI Trading Help</h3>
+        <p>Get guided support, explanations, and market breakdowns through an AI assistant.</p>
+      </div>
+      <div class="card">
+        <h3>Free + Premium</h3>
+        <p>Start with simple tools for free, then upgrade for deeper market analysis and premium learning features.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container section" id="pricing">
+    <h2>Pricing</h2>
+    <div class="pricing">
+      <div class="price-card">
+        <h3>Free</h3>
+        <div class="price">$0</div>
+        <p>Basic market view, simple trends, and access to introductory content.</p>
+      </div>
+      <div class="price-card">
+        <h3>Alpha</h3>
+        <div class="price">$25/mo</div>
+        <p>Full course access, deeper stock analysis, premium AI support, and better market detail.</p>
+      </div>
+      <div class="price-card">
+        <h3>Institutional</h3>
+        <div class="price">Custom</div>
+        <p>Advanced tools, expanded insights, and a higher-tier experience for serious users.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © 2026 NEO-Quants. All rights reserved.
+  </footer>
 </body>
 </html>
