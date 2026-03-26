@@ -1,184 +1,1403 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEO-Quants</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEO-Quants</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07111b;
+      --bg-2: #0b1622;
+      --panel: rgba(16, 28, 42, 0.88);
+      --line: rgba(149, 184, 219, 0.16);
+      --text: #edf4ff;
+      --muted: #9eb2c9;
+      --primary: #43d0ff;
+      --primary-2: #35f0c1;
+      --gold: #ffbf5f;
+      --green: #21c77a;
+      --red: #ff6b7a;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0b1020;
-  color: white;
-}
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(67,208,255,.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(53,240,193,.08), transparent 26%),
+        linear-gradient(180deg, #07111b 0%, #091522 40%, #08111a 100%);
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    .container { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+    .mono { font-family: "JetBrains Mono", monospace; }
 
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 20px;
-}
+    .grid-bg::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at center, black 35%, transparent 78%);
+      pointer-events: none;
+      z-index: -1;
+    }
 
-.hero {
-  text-align: center;
-  padding: 80px 20px;
-}
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(7, 17, 27, 0.76);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      gap: 18px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #051019;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: 0 10px 30px rgba(67,208,255,.28);
+    }
+    .brand-text span { color: var(--primary); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .22s transform ease, .22s opacity ease, .22s box-shadow ease, .22s background ease;
+      display: inline-block;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      color: #041018;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 16px 34px rgba(53,240,193,.18);
+    }
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+    }
 
-.hero h1 {
-  font-size: 50px;
-}
+    .hero { padding: 72px 0 34px; }
+    .hero-wrap {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .badge {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(67,208,255,.22);
+      background: rgba(67,208,255,.08);
+      color: #b8eeff;
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary-2);
+      box-shadow: 0 0 0 8px rgba(53,240,193,.10);
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: .72; }
+    }
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: clamp(42px, 7vw, 84px);
+      line-height: .96;
+      letter-spacing: -.04em;
+    }
+    .hero h1 .accent { color: var(--primary); }
+    .hero h1 .accent2 { color: var(--gold); }
+    .hero p {
+      font-size: 17px;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 670px;
+      margin: 0 0 24px;
+    }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+    .hero-points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .hero-point {
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .hero-point strong { display: block; color: var(--text); font-size: 16px; margin-bottom: 4px; }
 
-.hero p {
-  color: #cbd5e1;
-  max-width: 600px;
-  margin: 10px auto 30px;
-}
+    .hero-panel {
+      background: linear-gradient(180deg, rgba(18,33,49,.94), rgba(11,20,31,.94));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+    .window-dots { display: flex; gap: 8px; }
+    .window-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.18);
+    }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 18px;
+    }
+    .hero-stat {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.02);
+    }
+    .hero-stat .kicker {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .hero-stat .big { font-size: 28px; font-weight: 800; }
+    .chart-box {
+      margin: 0 18px 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(67,208,255,.05), rgba(255,255,255,.02));
+    }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .chart-legend { color: var(--muted); font-size: 13px; }
+    .chart-value { font-weight: 800; }
+    .chart-value.up { color: var(--green); }
+    svg.chart { width: 100%; height: 200px; display: block; }
 
-.btn {
-  background: #2563eb;
-  padding: 12px 20px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: white;
-  margin: 5px;
-  display: inline-block;
-}
+    .ticker-wrap {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      overflow: hidden;
+      margin-top: 28px;
+    }
+    .ticker {
+      display: flex;
+      gap: 34px;
+      padding: 14px 0;
+      white-space: nowrap;
+      animation: ticker 32s linear infinite;
+      width: max-content;
+    }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .ticker-item { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; }
+    .ticker-item strong { color: var(--text); }
+    .ticker-item span { color: var(--muted); }
+    .up { color: var(--green) !important; }
+    .down { color: var(--red) !important; }
 
-.section {
-  padding: 50px 0;
-}
+    section { padding: 70px 0; }
+    .section-head { margin-bottom: 28px; }
+    .eyebrow {
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: clamp(30px, 5vw, 58px);
+      line-height: .98;
+      letter-spacing: -.04em;
+    }
+    .section-sub {
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 16px;
+      margin: 0;
+    }
 
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-}
+    .cards-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .info-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .info-card .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      background: rgba(67,208,255,.10);
+      margin-bottom: 12px;
+    }
+    .info-card h3 { margin: 0 0 8px; font-size: 18px; }
+    .info-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
 
-.card {
-  background: #111827;
-  padding: 20px;
-  border-radius: 12px;
-}
+    .market-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+    .tab {
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .tab.active { color: #041018; background: linear-gradient(135deg, var(--primary), var(--primary-2)); border-color: transparent; }
+    .search {
+      min-width: 260px;
+      flex: 1;
+      max-width: 380px;
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      outline: none;
+    }
 
-.market {
-  background: #111827;
-  padding: 20px;
-  border-radius: 12px;
-}
+    .market-layout {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 18px;
+    }
+    .table-card, .detail-card, .course-card, .pricing-card, .ai-card, .quiz-card, .payment-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+    .table-wrap { overflow: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 14px;
+    }
+    th {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: 11px;
+      background: rgba(255,255,255,.02);
+      position: sticky;
+      top: 0;
+    }
+    tbody tr { cursor: pointer; transition: background .18s ease; }
+    tbody tr:hover { background: rgba(255,255,255,.03); }
+    .symbol-pill { display: inline-flex; align-items: center; gap: 10px; }
+    .sym-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(67,208,255,.08);
+    }
+    .signal {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    .sig-buy { background: rgba(33,199,122,.12); color: #7ff0b5; }
+    .sig-neutral { background: rgba(255,255,255,.07); color: #c7d3e0; }
+    .sig-sell { background: rgba(255,107,122,.14); color: #ff9eaa; }
+    .trend-track {
+      width: 78px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .trend-fill { height: 100%; border-radius: 999px; }
+    .locked { position: relative; color: var(--muted); }
+    .locked::after {
+      content: 'PRO';
+      margin-left: 8px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: #041018;
+      background: linear-gradient(135deg, var(--gold), #ffd68f);
+      padding: 3px 7px;
+      border-radius: 999px;
+      vertical-align: middle;
+    }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  border: none;
-}
+    .detail-card { padding: 18px; }
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .detail-meta { color: var(--muted); font-size: 13px; }
+    .detail-price { font-size: 30px; font-weight: 800; }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .mini-stat {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.02);
+    }
+    .mini-stat span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+    .mini-stat strong { font-size: 15px; }
+    .detail-chart {
+      margin: 14px 0;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(67,208,255,.05), rgba(255,255,255,.02));
+    }
+    svg.detail-svg { width: 100%; height: 230px; display: block; }
+    .analysis-box {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .analysis-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid var(--line);
+    }
+    .analysis-body { padding: 16px; color: var(--muted); line-height: 1.7; font-size: 14px; }
+    .analysis-body strong { color: var(--text); }
+    .blurred { filter: blur(4px); user-select: none; pointer-events: none; }
+    .upgrade-note {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: linear-gradient(135deg, rgba(67,208,255,.08), rgba(255,191,95,.08));
+      border: 1px solid rgba(255,191,95,.18);
+      border-radius: 16px;
+      padding: 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+    .courses-layout {
+      display: grid;
+      grid-template-columns: .74fr 1.26fr;
+      gap: 18px;
+    }
+    .course-list {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 780px;
+      overflow: auto;
+    }
+    .course-item {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.02);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .course-item:hover, .course-item.active {
+      border-color: rgba(67,208,255,.34);
+      background: rgba(67,208,255,.06);
+    }
+    .course-tag {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      background: rgba(255,255,255,.06);
+      color: #d7e5f7;
+    }
+    .course-item h3 { margin: 0 0 7px; font-size: 17px; }
+    .course-item p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .course-meta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
 
-td, th {
-  padding: 10px;
-  text-align: left;
-}
+    .course-card { overflow: hidden; }
+    .course-hero {
+      padding: 22px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(67,208,255,.10), rgba(53,240,193,.06));
+    }
+    .course-hero h3 { margin: 10px 0 8px; font-size: 28px; }
+    .course-hero p { margin: 0; color: var(--muted); line-height: 1.7; }
+    .video-box {
+      margin-top: 16px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0b1725, #12243a);
+      border: 1px solid rgba(67,208,255,.18);
+      min-height: 240px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+    .play {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      font-size: 30px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.26);
+    }
+    .video-caption {
+      position: absolute;
+      left: 18px;
+      bottom: 16px;
+      right: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #d4e6fb;
+      font-size: 13px;
+    }
+    .lesson-blocks { padding: 18px 22px 0; display: grid; gap: 14px; }
+    .lesson {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.02);
+    }
+    .lesson h4 { margin: 0 0 10px; font-size: 18px; }
+    .lesson p { color: var(--muted); line-height: 1.7; font-size: 14px; margin: 0; }
 
-.green { color: #22c55e; }
-.red { color: #ef4444; }
+    .quiz-card { margin: 18px 22px 22px; padding: 18px; }
+    .quiz-question { font-size: 18px; margin: 0 0 14px; }
+    .quiz-options { display: grid; gap: 10px; }
+    .quiz-option {
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      cursor: pointer;
+      color: var(--text);
+      text-align: left;
+    }
+    .quiz-option.correct { border-color: rgba(33,199,122,.36); background: rgba(33,199,122,.10); }
+    .quiz-option.wrong { border-color: rgba(255,107,122,.34); background: rgba(255,107,122,.10); }
+    .quiz-feedback { margin-top: 12px; color: var(--muted); line-height: 1.7; font-size: 14px; min-height: 24px; }
 
-.pricing {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
+    .ai-layout {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .ai-copy { display: grid; gap: 14px; align-content: start; }
+    .bullet {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.02);
+    }
+    .bullet .icon { width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center; background: rgba(67,208,255,.1); flex-shrink: 0; }
+    .bullet h4 { margin: 0 0 6px; }
+    .bullet p { margin: 0; color: var(--muted); line-height: 1.65; font-size: 14px; }
+    .ai-card { overflow: hidden; }
+    .chat-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255,255,255,.02);
+    }
+    .chat-badge { color: var(--primary-2); font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+    .chat-box {
+      height: 420px;
+      overflow: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .msg { max-width: 82%; padding: 13px 14px; border-radius: 16px; line-height: 1.6; font-size: 14px; }
+    .msg.bot { align-self: flex-start; background: rgba(67,208,255,.08); border: 1px solid rgba(67,208,255,.16); }
+    .msg.user { align-self: flex-end; background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+    .chat-controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 14px 16px 16px;
+      border-top: 1px solid var(--line);
+    }
+    .chat-input {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 12px 14px;
+      outline: none;
+    }
 
-.price-card {
-  background: #111827;
-  padding: 20px;
-  border-radius: 12px;
-}
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .pricing-card { padding: 22px; position: relative; overflow: hidden; }
+    .pricing-card.featured {
+      background: linear-gradient(180deg, rgba(67,208,255,.10), rgba(16,28,42,.88));
+      border-color: rgba(67,208,255,.3);
+      transform: translateY(-6px);
+    }
+    .pricing-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--gold), #ffdd9f);
+      color: #241200;
+    }
+    .plan-name { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .plan-price { font-size: 46px; font-weight: 800; margin: 8px 0; letter-spacing: -.04em; }
+    .plan-price small { font-size: 18px; color: var(--muted); }
+    .plan-copy { color: var(--muted); line-height: 1.7; min-height: 72px; }
+    .plan-list { display: grid; gap: 10px; margin: 18px 0 22px; padding: 0; list-style: none; }
+    .plan-list li { color: var(--muted); font-size: 14px; display: flex; gap: 10px; align-items: start; }
+    .plan-list li::before { content: '✓'; color: var(--primary-2); font-weight: 800; }
 
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #94a3b8;
-}
-</style>
+    .payment-layout {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .payment-copy { color: var(--muted); line-height: 1.7; }
+    .payment-highlights { display: grid; gap: 10px; margin-top: 16px; }
+    .payment-highlights div {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .payment-card { padding: 18px; }
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .field { display: grid; gap: 8px; margin-bottom: 12px; }
+    .field label { color: var(--muted); font-size: 13px; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 12px 14px;
+      outline: none;
+    }
+    .field textarea { min-height: 100px; resize: vertical; }
+    .fineprint { color: var(--muted); font-size: 12px; line-height: 1.65; }
+
+    footer { padding: 26px 0 40px; color: var(--muted); }
+    .footer-box {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--line);
+      padding-top: 22px;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-wrap, .market-layout, .courses-layout, .ai-layout, .pricing-grid, .payment-layout, .cards-4 { grid-template-columns: 1fr 1fr; }
+      .courses-layout, .payment-layout, .ai-layout, .market-layout, .hero-wrap { grid-template-columns: 1fr; }
+      .hero-point { min-height: 88px; }
+    }
+    @media (max-width: 760px) {
+      .nav-links { display: none; }
+      .hero-points, .cards-4, .pricing-grid, .detail-grid, .field-grid { grid-template-columns: 1fr; }
+      section { padding: 56px 0; }
+      .container { width: min(100% - 20px, 1180px); }
+      .hero { padding-top: 46px; }
+      .detail-top { flex-direction: column; align-items: start; }
+      .market-toolbar { align-items: stretch; }
+      .search { max-width: none; }
+      .footer-box { align-items: start; }
+    }
+  </style>
 </head>
-
-<body>
-
-<div class="hero">
-  <h1>NEO-Quants</h1>
-  <p>Trading made simple. Learn, analyze, and track markets in one place.</p>
-  <a href="#" class="btn">Launch App</a>
-</div>
-
-<div class="container section">
-  <h2>Features</h2>
-  <div class="cards">
-    <div class="card">Trading Courses</div>
-    <div class="card">Live Market Data</div>
-    <div class="card">AI Trading Assistant</div>
-    <div class="card">Free + Premium Plans</div>
-  </div>
-</div>
-
-<div class="container section">
-  <h2>Live Market (Demo)</h2>
-  <div class="market">
-    <input type="text" id="search" placeholder="Search stock...">
-
-    <table id="table">
-      <tr><th>Symbol</th><th>Price</th><th>Change</th></tr>
-      <tr><td>AAPL</td><td>182</td><td class="green">+1.2%</td></tr>
-      <tr><td>TSLA</td><td>240</td><td class="red">-0.8%</td></tr>
-      <tr><td>SPY</td><td>510</td><td class="green">+0.5%</td></tr>
-    </table>
-  </div>
-</div>
-
-<div class="container section">
-  <h2>Pricing</h2>
-  <div class="pricing">
-    <div class="price-card">
-      <h3>Free</h3>
-      <p>$0</p>
-      <p>Basic market + simple trends</p>
+<body class="grid-bg">
+  <nav>
+    <div class="container nav-inner">
+      <a href="#top" class="brand">
+        <div class="brand-mark">NQ</div>
+        <div class="brand-text">NEO-<span>Quants</span></div>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#markets">Markets</a>
+        <a href="#courses">Courses</a>
+        <a href="#ai">AI Assistant</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#payment" class="btn btn-secondary">Join Now</a>
+      </div>
     </div>
+  </nav>
 
-    <div class="price-card">
-      <h3>Alpha</h3>
-      <p>$25/month</p>
-      <p>Full analysis + AI insights</p>
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-wrap">
+        <div>
+          <div class="badge"><span class="badge-dot"></span> Live market board + guided learning + AI support</div>
+          <h1>Trade <span class="accent">smarter</span> with a clean, modern <span class="accent2">all-in-one</span> platform.</h1>
+          <p>NEO-Quants combines live market tracking, structured trading courses, interactive quizzes, and a built-in AI trading guide. The free experience stays simple. Paid members unlock deeper analysis, stronger AI help, and the full curriculum.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#payment">Get Started</a>
+            <a class="btn btn-secondary" href="#courses">View Courses</a>
+          </div>
+          <div class="hero-points">
+            <div class="hero-point"><strong>Live Watchlist</strong> Search stocks, ETFs, crypto, futures, and forex in one place.</div>
+            <div class="hero-point"><strong>AI Help</strong> Get strategy explanations, risk tips, and setup guidance instantly.</div>
+            <div class="hero-point"><strong>Full Learning Path</strong> Beginner to advanced lessons with videos, notes, and quizzes.</div>
+          </div>
+        </div>
+
+        <div class="hero-panel">
+          <div class="panel-head">
+            <div class="window-dots"><span></span><span></span><span></span></div>
+            <div class="mono" style="color:var(--muted);font-size:12px;">NEO-Quants live board</div>
+          </div>
+          <div class="hero-stats">
+            <div class="hero-stat"><span class="kicker">Tracked Instruments</span><div class="big">120+</div></div>
+            <div class="hero-stat"><span class="kicker">AI Support</span><div class="big">24/7</div></div>
+            <div class="hero-stat"><span class="kicker">Core Courses</span><div class="big">6 paths</div></div>
+            <div class="hero-stat"><span class="kicker">Member Plan</span><div class="big">$25/mo</div></div>
+          </div>
+          <div class="chart-box">
+            <div class="chart-header">
+              <div>
+                <div class="mono chart-legend">MODEL WATCHLIST</div>
+                <div style="font-weight:700;margin-top:4px;">Growth Momentum Composite</div>
+              </div>
+              <div class="chart-value up">+3.84%</div>
+            </div>
+            <svg class="chart" viewBox="0 0 600 200" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="heroFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#43d0ff" stop-opacity=".28"/>
+                  <stop offset="100%" stop-color="#43d0ff" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <polyline fill="none" stroke="#27435a" stroke-width="1" points="0,150 600,150"></polyline>
+              <polyline fill="none" stroke="#27435a" stroke-width="1" points="0,100 600,100"></polyline>
+              <polyline fill="none" stroke="#27435a" stroke-width="1" points="0,50 600,50"></polyline>
+              <polygon fill="url(#heroFill)" points="0,160 40,150 85,154 130,146 175,136 220,141 265,120 310,114 355,118 400,98 445,90 490,68 535,58 600,38 600,200 0,200"></polygon>
+              <polyline fill="none" stroke="#43d0ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" points="0,160 40,150 85,154 130,146 175,136 220,141 265,120 310,114 355,118 400,98 445,90 490,68 535,58 600,38"></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="ticker-wrap">
+        <div class="container" style="overflow:hidden;">
+          <div class="ticker" id="ticker"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Platform highlights</div>
+          <h2>Everything stays clean, smooth, and easy to follow.</h2>
+          <p class="section-sub">The free version gives a minimal view with simple trend signals. Paid users get full writeups, richer lessons, better AI responses, and a more complete member experience.</p>
+        </div>
+        <div class="cards-4">
+          <article class="info-card"><div class="icon">📊</div><h3>Live market board</h3><p>Track instruments by category, search fast, click for details, and view a live-style chart with clean signals.</p></article>
+          <article class="info-card"><div class="icon">🎓</div><h3>Complete courses</h3><p>Futures, options, stocks, crypto, forex, psychology, and risk management with practical lesson content.</p></article>
+          <article class="info-card"><div class="icon">🤖</div><h3>AI assistant</h3><p>A stronger built-in guide that answers trading questions, explains setups, and gives tailored educational help.</p></article>
+          <article class="info-card"><div class="icon">💳</div><h3>Professional join flow</h3><p>Clean membership form that sends plan requests to you privately without showing your email on the page.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="markets">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Live markets</div>
+          <h2>Minimal for free. Deeper for paid.</h2>
+          <p class="section-sub">Search your symbol, click any row, and see a focused detail panel. Free users get a quick read. Alpha members unlock the full analysis block.</p>
+        </div>
+
+        <div class="market-toolbar">
+          <div class="tabs" id="tabs"></div>
+          <input id="searchInput" class="search" placeholder="Search ticker or name..." />
+        </div>
+
+        <div class="market-layout">
+          <div class="table-card table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Price</th>
+                  <th>Change</th>
+                  <th>Trend</th>
+                  <th>Signal</th>
+                  <th class="locked">AI Analysis</th>
+                </tr>
+              </thead>
+              <tbody id="marketRows"></tbody>
+            </table>
+          </div>
+
+          <aside class="detail-card">
+            <div class="detail-top">
+              <div>
+                <div class="eyebrow" style="margin-bottom:6px;">Selected asset</div>
+                <div id="detailTitle" style="font-size:26px;font-weight:800;">AAPL</div>
+                <div id="detailMeta" class="detail-meta">Apple Inc. · Stocks</div>
+              </div>
+              <div>
+                <div id="detailPrice" class="detail-price">$213.40</div>
+                <div id="detailChange" class="mono up">+1.22%</div>
+              </div>
+            </div>
+            <div class="detail-grid">
+              <div class="mini-stat"><span>Trend</span><strong id="detailTrend">Bullish</strong></div>
+              <div class="mini-stat"><span>Support</span><strong id="detailSupport">$209.80</strong></div>
+              <div class="mini-stat"><span>Resistance</span><strong id="detailResistance">$217.60</strong></div>
+            </div>
+            <div class="detail-chart">
+              <svg id="detailChart" class="detail-svg" viewBox="0 0 500 230" preserveAspectRatio="none"></svg>
+            </div>
+            <div class="analysis-box">
+              <div class="analysis-head">
+                <strong>Free market read</strong>
+                <span class="mono" style="color:var(--muted);font-size:12px;">basic view</span>
+              </div>
+              <div id="freeAnalysis" class="analysis-body"></div>
+            </div>
+            <div class="analysis-box">
+              <div class="analysis-head">
+                <strong>Alpha member analysis</strong>
+                <span class="mono" style="color:var(--gold);font-size:12px;">premium</span>
+              </div>
+              <div id="proAnalysis" class="analysis-body blurred"></div>
+            </div>
+            <div class="upgrade-note">
+              <span>Alpha unlocks full scenario breakdowns, support/resistance context, and a clearer next-step summary.</span>
+              <a href="#pricing" class="btn btn-primary" style="padding:10px 14px;white-space:nowrap;">Unlock Alpha</a>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="courses">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Course library</div>
+          <h2>A real course path with videos, notes, and quizzes.</h2>
+          <p class="section-sub">This includes a full structured curriculum. Each path has a video module, lesson breakdown, practical notes, and a quick quiz so the site feels worth paying for.</p>
+        </div>
+
+        <div class="courses-layout">
+          <div class="table-card course-list" id="courseList"></div>
+          <div class="course-card">
+            <div class="course-hero">
+              <span id="courseTag" class="course-tag">BEGINNER</span>
+              <h3 id="courseTitle">Trading Foundations</h3>
+              <p id="courseIntro"></p>
+              <div class="video-box">
+                <div class="play">▶</div>
+                <div class="video-caption">
+                  <span id="videoTitle">Module video</span>
+                  <span id="videoLength" class="mono">18:40</span>
+                </div>
+              </div>
+            </div>
+            <div class="lesson-blocks" id="lessonBlocks"></div>
+            <div class="quiz-card">
+              <div class="eyebrow" style="margin-bottom:8px;">Quick quiz</div>
+              <h4 id="quizQuestion" class="quiz-question"></h4>
+              <div id="quizOptions" class="quiz-options"></div>
+              <div id="quizFeedback" class="quiz-feedback"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">AI assistant</div>
+          <h2>Built-in help that actually teaches.</h2>
+          <p class="section-sub">This is a polished educational AI layer. It explains strategies, risk, setups, and trading terms in a better way than a basic chatbot demo.</p>
+        </div>
+
+        <div class="ai-layout">
+          <div class="ai-copy">
+            <div class="bullet"><div class="icon">🧠</div><div><h4>Explains concepts simply</h4><p>Ask about spreads, futures leverage, trend following, stop losses, or trading psychology and get a clear answer.</p></div></div>
+            <div class="bullet"><div class="icon">🛡️</div><div><h4>Focuses on risk first</h4><p>The AI defaults to safer thinking: position sizing, waiting for confirmation, and avoiding emotional entries.</p></div></div>
+            <div class="bullet"><div class="icon">📘</div><div><h4>Matches the course library</h4><p>It can guide users back into the right lesson path when they ask a question that connects to a course topic.</p></div></div>
+          </div>
+
+          <div class="ai-card">
+            <div class="chat-head">
+              <div>
+                <strong>NEO-Quants AI</strong>
+                <div style="color:var(--muted);font-size:13px;margin-top:4px;">Educational trading help, strategy explanations, and lesson support</div>
+              </div>
+              <div class="chat-badge">LIVE GUIDE</div>
+            </div>
+            <div id="chatBox" class="chat-box">
+              <div class="msg bot">Hey — I’m your NEO-Quants guide. Ask me about futures, options, entries, stop losses, position sizing, trend confirmation, or which course to study first.</div>
+            </div>
+            <div class="chat-controls">
+              <input id="chatInput" class="chat-input" placeholder="Ask a trading question..." />
+              <button id="sendBtn" class="btn btn-primary">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Pricing</div>
+          <h2>Choose the level that fits.</h2>
+          <p class="section-sub">The free plan stays simple. Alpha is the main paid plan at $25/month. Pro is for users who want the fullest version of the experience.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="plan-name">Free</div>
+            <div class="plan-price">$0 <small>/ forever</small></div>
+            <p class="plan-copy">A minimal market board with quick reads, simple trend labels, and basic educational access.</p>
+            <ul class="plan-list">
+              <li>Live market watchlist</li>
+              <li>Simple trend signals</li>
+              <li>Basic market detail panel</li>
+              <li>Sample lesson previews</li>
+            </ul>
+            <a href="#payment" class="btn btn-secondary" style="display:block;text-align:center;">Start Free</a>
+          </div>
+
+          <div class="pricing-card featured">
+            <div class="pricing-badge">MOST POPULAR</div>
+            <div class="plan-name">Alpha</div>
+            <div class="plan-price">$25 <small>/ month</small></div>
+            <p class="plan-copy">The core membership with full courses, deeper market analysis, full AI guidance, quizzes, and cleaner premium access.</p>
+            <ul class="plan-list">
+              <li>All course paths unlocked</li>
+              <li>Full AI market analysis</li>
+              <li>Richer AI assistant responses</li>
+              <li>Video modules + notes + quizzes</li>
+              <li>Premium member view</li>
+            </ul>
+            <a href="#payment" class="btn btn-primary" style="display:block;text-align:center;">Join Alpha</a>
+          </div>
+
+          <div class="pricing-card">
+            <div class="plan-name">Pro</div>
+            <div class="plan-price">$79 <small>/ month</small></div>
+            <p class="plan-copy">For power users who want the strongest learning flow, deeper AI guidance, and a more advanced member experience.</p>
+            <ul class="plan-list">
+              <li>Everything in Alpha</li>
+              <li>Advanced strategy tracks</li>
+              <li>Expanded premium insights</li>
+              <li>Priority member requests</li>
+              <li>More complete pro experience</li>
+            </ul>
+            <a href="#payment" class="btn btn-secondary" style="display:block;text-align:center;">Go Pro</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="payment">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Membership request</div>
+          <h2>Clean payment intake flow.</h2>
+          <p class="section-sub">This form sends a membership request to you privately. Your email is not shown on the site. For real card charging, recurring billing, and secure subscriptions, you would connect Stripe later.</p>
+        </div>
+
+        <div class="payment-layout">
+          <div class="payment-copy">
+            <p>This page includes a professional join flow for now. It collects the plan choice and member details, then opens a private email draft addressed to you so you can follow up or send a payment link manually.</p>
+            <div class="payment-highlights">
+              <div><strong style="color:var(--text);display:block;margin-bottom:6px;">Private on-page experience</strong>No public email is visible anywhere in the website content.</div>
+              <div><strong style="color:var(--text);display:block;margin-bottom:6px;">Good for first launch</strong>You can validate interest before setting up a full recurring payment system.</div>
+              <div><strong style="color:var(--text);display:block;margin-bottom:6px;">Easy future upgrade</strong>Later you can replace this with Stripe Checkout or a hosted member portal.</div>
+            </div>
+          </div>
+
+          <div class="payment-card">
+            <div class="field-grid">
+              <div class="field">
+                <label for="memberName">Full name</label>
+                <input id="memberName" placeholder="Your name" />
+              </div>
+              <div class="field">
+                <label for="memberEmail">Email</label>
+                <input id="memberEmail" placeholder="you@example.com" />
+              </div>
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label for="memberPlan">Plan</label>
+                <select id="memberPlan">
+                  <option>Free</option>
+                  <option selected>Alpha - $25/month</option>
+                  <option>Pro - $79/month</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="memberFocus">Main focus</label>
+                <select id="memberFocus">
+                  <option>Stocks</option>
+                  <option>Options</option>
+                  <option>Futures</option>
+                  <option>Crypto</option>
+                  <option>Forex</option>
+                  <option>Mixed</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="memberNotes">Anything they want help with</label>
+              <textarea id="memberNotes" placeholder="Example: I want to learn options from beginner to advanced and use the AI for setup explanations."></textarea>
+            </div>
+            <button id="joinBtn" class="btn btn-primary" style="width:100%;">Send Membership Request</button>
+            <p class="fineprint" style="margin-top:12px;">This is a professional request form, not a real secure card processor. For actual recurring payments, card storage, and automated billing, connect Stripe or another payment provider later.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-box">
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:6px;">NEO-Quants</div>
+        <div>Built as a clean standalone website experience for GitHub Pages.</div>
+      </div>
+      <div>© 2026 NEO-Quants · Educational use only · Not financial advice</div>
     </div>
+  </footer>
 
-    <div class="price-card">
-      <h3>Institutional</h3>
-      <p>Custom</p>
-      <p>Advanced tools</p>
-    </div>
-  </div>
-</div>
+  <script>
+    const marketData = {
+      Stocks: [
+        { symbol: 'AAPL', name: 'Apple Inc.', price: 213.4, type: 'Stocks' },
+        { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 875.5, type: 'Stocks' },
+        { symbol: 'MSFT', name: 'Microsoft Corp.', price: 418.2, type: 'Stocks' },
+        { symbol: 'TSLA', name: 'Tesla Inc.', price: 248.7, type: 'Stocks' },
+        { symbol: 'AMZN', name: 'Amazon.com', price: 198.1, type: 'Stocks' }
+      ],
+      ETFs: [
+        { symbol: 'SPY', name: 'SPDR S&P 500 ETF', price: 582.3, type: 'ETFs' },
+        { symbol: 'QQQ', name: 'Invesco QQQ', price: 487.6, type: 'ETFs' },
+        { symbol: 'IWM', name: 'Russell 2000 ETF', price: 208.4, type: 'ETFs' },
+        { symbol: 'VTI', name: 'Vanguard Total Market', price: 252.8, type: 'ETFs' }
+      ],
+      Crypto: [
+        { symbol: 'BTC', name: 'Bitcoin', price: 87320, type: 'Crypto' },
+        { symbol: 'ETH', name: 'Ethereum', price: 2081.4, type: 'Crypto' },
+        { symbol: 'SOL', name: 'Solana', price: 138.2, type: 'Crypto' },
+        { symbol: 'XRP', name: 'XRP', price: 2.34, type: 'Crypto' }
+      ],
+      Futures: [
+        { symbol: 'ES', name: 'S&P 500 Futures', price: 5842.25, type: 'Futures' },
+        { symbol: 'NQ', name: 'Nasdaq Futures', price: 20411.5, type: 'Futures' },
+        { symbol: 'CL', name: 'Crude Oil Futures', price: 78.42, type: 'Futures' },
+        { symbol: 'GC', name: 'Gold Futures', price: 3014.8, type: 'Futures' }
+      ],
+      Forex: [
+        { symbol: 'EUR/USD', name: 'Euro / US Dollar', price: 1.0842, type: 'Forex' },
+        { symbol: 'GBP/USD', name: 'British Pound / US Dollar', price: 1.2618, type: 'Forex' },
+        { symbol: 'USD/JPY', name: 'US Dollar / Yen', price: 149.82, type: 'Forex' },
+        { symbol: 'USD/CAD', name: 'US Dollar / Canadian Dollar', price: 1.3614, type: 'Forex' }
+      ]
+    };
 
-<footer>
-  © 2026 NEO-Quants
-</footer>
+    const analysisTemplates = {
+      bullish: {
+        free: 'Momentum is positive and price is still respecting higher-low structure. Free users should watch whether buyers keep defending pullbacks before chasing strength.',
+        pro: 'Full read: trend remains constructive above key short-term support. If momentum holds, continuation is more likely than reversal. Better entries usually come on calm pullbacks into support rather than emotional breakouts. Watch confirmation through volume, structure, and whether the next higher low stays intact. Risk stays cleaner if invalidation is defined before entry.'
+      },
+      neutral: {
+        free: 'Price is moving sideways and there is no strong edge yet. Free users should wait for either a cleaner breakout or a confirmed support test.',
+        pro: 'Full read: market is balanced and still building a range. The better plan is patience. A confirmed break above resistance can open momentum continuation, while a failed breakout can quickly rotate lower. In range conditions, risk control matters more because false moves are common.'
+      },
+      bearish: {
+        free: 'Pressure is leaning lower and rallies may struggle unless structure improves. Free users should avoid forcing entries against the current move.',
+        pro: 'Full read: sellers currently control short-term structure. Unless price reclaims resistance with strength, downside continuation stays in play. Better discipline means waiting for either a confirmed reversal signal or a clean bounce into a defined invalidation level. Chasing weakness late is usually lower quality than planning the trade ahead of time.'
+      }
+    };
 
-<script>
-const search = document.getElementById("search");
-search.addEventListener("keyup", function() {
-  let filter = search.value.toUpperCase();
-  let rows = document.querySelectorAll("#table tr");
+    const icons = { Stocks: '📈', ETFs: '🏦', Crypto: '₿', Futures: '🔮', Forex: '💱' };
+    let activeCategory = 'Stocks';
+    let rows = [];
+    let selected = null;
 
-  rows.forEach((row, i) => {
-    if (i === 0) return;
-    let text = row.innerText.toUpperCase();
-    row.style.display = text.includes(filter) ? "" : "none";
-  });
-});
-</script>
+    function makeSeries(base) {
+      let value = base;
+      return Array.from({ length: 24 }, () => {
+        value += (Math.random() - 0.42) * Math.max(base * 0.009, 0.03);
+        return Number(value.toFixed(base < 10 ? 4 : 2));
+      });
+    }
 
+    function initializeRows() {
+      rows = Object.values(marketData).flat().map(item => {
+        const dir = Math.random();
+        const pct = Number(((dir > 0.66 ? 1 : dir < 0.33 ? -1 : 0) * (0.4 + Math.random() * 2.8)).toFixed(2));
+        const signal = pct > 1 ? 'buy' : pct < -1 ? 'sell' : 'neutral';
+        const trend = pct > 0.6 ? 'bullish' : pct < -0.6 ? 'bearish' : 'neutral';
+        const support = Number((item.price * (1 - (0.008 + Math.random() * 0.02))).toFixed(item.price < 10 ? 4 : 2));
+        const resistance = Number((item.price * (1 + (0.008 + Math.random() * 0.02))).toFixed(item.price < 10 ? 4 : 2));
+        return { ...item, changePct: pct, changeAbs: Number((item.price * (pct / 100)).toFixed(item.price < 10 ? 4 : 2)), trend, signal, strength: Math.min(Math.abs(pct) * 28, 100), support, resistance, series: makeSeries(item.price) };
+      });
+      selected = rows[0];
+    }
+
+    function fmtPrice(val) {
+      if (val < 10) return val.toFixed(4);
+      if (val < 1000) return val.toFixed(2);
+      return val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function renderTabs() {
+      const tabs = Object.keys(marketData);
+      document.getElementById('tabs').innerHTML = tabs.map(tab => `<button class="tab ${tab === activeCategory ? 'active' : ''}" data-tab="${tab}">${icons[tab]} ${tab}</button>`).join('');
+      document.querySelectorAll('.tab').forEach(btn => {
+        btn.addEventListener('click', () => { activeCategory = btn.dataset.tab; renderTabs(); renderRows(); });
+      });
+    }
+
+    function signalMarkup(signal) {
+      if (signal === 'buy') return '<span class="signal sig-buy">▲ Buy bias</span>';
+      if (signal === 'sell') return '<span class="signal sig-sell">▼ Sell bias</span>';
+      return '<span class="signal sig-neutral">• Neutral</span>';
+    }
+
+    function trendMarkup(row) {
+      const width = Math.max(18, row.strength);
+      const color = row.trend === 'bullish' ? 'linear-gradient(90deg,#35f0c1,#43d0ff)' : row.trend === 'bearish' ? 'linear-gradient(90deg,#ff9eaa,#ff6b7a)' : 'linear-gradient(90deg,#c7d3e0,#7c93ac)';
+      const label = row.trend.charAt(0).toUpperCase() + row.trend.slice(1);
+      return `<span class="trend-track"><span class="trend-fill" style="display:block;width:${width}%;background:${color}"></span></span><span style="color:var(--muted);font-size:12px;">${label}</span>`;
+    }
+
+    function renderRows() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const filtered = rows.filter(r => r.type === activeCategory).filter(r => !q || r.symbol.toLowerCase().includes(q) || r.name.toLowerCase().includes(q));
+      const body = document.getElementById('marketRows');
+      body.innerHTML = filtered.map(row => `
+        <tr data-symbol="${row.symbol}">
+          <td><span class="symbol-pill"><span class="sym-icon">${icons[row.type]}</span><span><strong>${row.symbol}</strong><br><span style="color:var(--muted);font-size:12px;">${row.name}</span></span></span></td>
+          <td class="mono">$${fmtPrice(row.price)}</td>
+          <td class="mono ${row.changePct >= 0 ? 'up' : 'down'}">${row.changePct >= 0 ? '+' : ''}${row.changePct.toFixed(2)}%</td>
+          <td>${trendMarkup(row)}</td>
+          <td>${signalMarkup(row.signal)}</td>
+          <td class="locked">${row.trend === 'bullish' ? 'Continuation possible above support.' : row.trend === 'bearish' ? 'Caution below resistance.' : 'Wait for confirmation.'}</td>
+        </tr>
+      `).join('');
+      document.querySelectorAll('#marketRows tr').forEach(tr => {
+        tr.addEventListener('click', () => { selected = rows.find(r => r.symbol === tr.dataset.symbol); renderDetail(); });
+      });
+      if (!filtered.find(f => selected && f.symbol === selected.symbol) && filtered.length) selected = filtered[0];
+      if (selected) renderDetail();
+    }
+
+    function renderDetailChart(series) {
+      const svg = document.getElementById('detailChart');
+      const width = 500, height = 230;
+      const min = Math.min(...series), max = Math.max(...series);
+      const range = (max - min) || 1;
+      const points = series.map((val, idx) => {
+        const x = (idx / (series.length - 1)) * width;
+        const y = height - ((val - min) / range) * (height - 24) - 12;
+        return `${x},${y}`;
+      }).join(' ');
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="detailFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#43d0ff" stop-opacity=".26"></stop>
+            <stop offset="100%" stop-color="#43d0ff" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+        <polyline fill="none" stroke="#27435a" stroke-width="1" points="0,190 500,190"></polyline>
+        <polyline fill="none" stroke="#27435a" stroke-width="1" points="0,130 500,130"></polyline>
+        <polyline fill="none" stroke="#27435a" stroke-width="1" points="0,70 500,70"></polyline>
+        <polygon fill="url(#detailFill)" points="${points} 500,230 0,230"></polygon>
+        <polyline fill="none" stroke="#43d0ff" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" points="${points}"></polyline>
+      `;
+    }
+
+    function renderDetail() {
+      if (!selected) return;
+      document.getElementById('detailTitle').textContent = selected.symbol;
+      document.getElementById('detailMeta').textContent = `${selected.name} · ${selected.type}`;
+      document.getElementById('detailPrice').textContent = `$${fmtPrice(selected.price)}`;
+      const ch = document.getElementById('detailChange');
+      ch.textContent = `${selected.changePct >= 0 ? '+' : ''}${selected.changePct.toFixed(2)}%`;
+      ch.className = `mono ${selected.changePct >= 0 ? 'up' : 'down'}`;
+      document.getElementById('detailTrend').textContent = selected.trend.charAt(0).toUpperCase() + selected.trend.slice(1);
+      document.getElementById('detailSupport').textContent = `$${fmtPrice(selected.support)}`;
+      document.getElementById('detailResistance').textContent = `$${fmtPrice(selected.resistance)}`;
+      renderDetailChart(selected.series);
+      document.getElementById('freeAnalysis').innerHTML = `<strong>Quick read:</strong> ${analysisTemplates[selected.trend].free}`;
+      document.getElementById('proAnalysis').innerHTML = `<strong>Full scenario:</strong> ${analysisTemplates[selected.trend].pro}`;
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderRows);
+
+    function animateMarket() {
+      rows = rows.map(row => {
+        const drift = (Math.random() - 0.48) * row.price * 0.0026;
+        const price = Number((row.price + drift).toFixed(row.price < 10 ? 4 : 2));
+        const changePct = Number((row.changePct + (Math.random() - 0.5) * 0.18).toFixed(2));
+        const signal = changePct > 1 ? 'buy' : changePct < -1 ? 'sell' : 'neutral';
+        const trend = changePct > 0.6 ? 'bullish' : changePct < -0.6 ? 'bearish' : 'neutral';
+        const series = [...row.series.slice(1), price];
+        return { ...row, price, changePct, signal, trend, series, strength: Math.min(Math.abs(changePct) * 28, 100) };
+      });
+      selected = rows.find(r => selected && r.symbol === selected.symbol) || rows[0];
+      renderRows();
+      renderTicker();
+    }
+
+    function renderTicker() {
+      const items = rows.slice(0, 10);
+      const doubled = [...items, ...items];
+      document.getElementById('ticker').innerHTML = doubled.map(row => `<div class="ticker-item"><strong>${row.symbol}</strong><span>$${fmtPrice(row.price)}</span><span class="${row.changePct >= 0 ? 'up' : 'down'} mono">${row.changePct >= 0 ? '+' : ''}${row.changePct.toFixed(2)}%</span></div>`).join('');
+    }
+
+    const courses = [
+      { tag: 'BEGINNER', title: 'Trading Foundations', length: '18:40', intro: 'Start with the core language of markets: candlesticks, trend structure, support and resistance, order types, and the difference between a good trade and a random click.', meta: ['8 lessons','Beginner','Core setup'], lessons: [{ title: '1. Market structure basics', body: 'Learn how price trends, consolidates, breaks out, and pulls back. The goal is to read structure before worrying about fancy indicators.' }, { title: '2. Order types and execution', body: 'Understand market orders, limit orders, stop orders, and why execution quality matters when volatility rises.' }, { title: '3. Risk before reward', body: 'Build the habit of deciding invalidation, stop placement, and position size before every trade.' }], quiz: { question: 'What should be decided before you enter a trade?', options: ['Your stop, invalidation, and position size', 'How much profit you want emotionally', 'Whether social media likes the setup'], answer: 0, explain: 'Good trading starts with defined risk. If invalidation and sizing are unclear before entry, the trade is usually too loose.' } },
+      { tag: 'FUTURES', title: 'Futures Trading', length: '24:10', intro: 'Go deep on futures contracts, leverage, margin, session behavior, and when momentum setups are stronger in products like ES, NQ, and CL.', meta: ['10 lessons','Intermediate','Fast markets'], lessons: [{ title: '1. Contract logic', body: 'You are trading a leveraged contract, not a regular stock share. That changes both opportunity and risk instantly.' }, { title: '2. Session timing', body: 'Futures often behave differently during open, midday, and event-driven windows. Timing matters as much as direction.' }, { title: '3. Execution discipline', body: 'Because movement is faster, futures traders need tighter routines around stops, size, and not revenge trading.' }], quiz: { question: 'Why is leverage important in futures?', options: ['It increases both upside and downside', 'It removes the need for stops', 'It guarantees faster profits'], answer: 0, explain: 'Leverage magnifies results in both directions. That is why risk management becomes even more important in futures markets.' } },
+      { tag: 'OPTIONS', title: 'Options Strategy Path', length: '27:25', intro: 'Learn calls, puts, intrinsic vs extrinsic value, time decay, and how simple strategies can be used more safely than overcomplicated ones.', meta: ['11 lessons','Intermediate','Structured'], lessons: [{ title: '1. Calls and puts', body: 'Start with the building blocks. If these are not clear, advanced spreads will only create confusion.' }, { title: '2. Time decay and volatility', body: 'Theta and implied volatility affect option pricing even if you picked the right direction.' }, { title: '3. Simpler setups first', body: 'Master straightforward directional ideas before moving into multi-leg structures.' }], quiz: { question: 'What can hurt an option buyer even when direction is right?', options: ['Time decay', 'Using a ticker symbol', 'Waiting for confirmation'], answer: 0, explain: 'An option can lose value from time decay or changing implied volatility even if price moves somewhat in your favor.' } },
+      { tag: 'STOCKS', title: 'Swing Trading Stocks', length: '21:12', intro: 'Find cleaner swing setups by focusing on trend, confirmation, patience, and quality entries rather than forcing trades every day.', meta: ['9 lessons','All levels','Practical'], lessons: [{ title: '1. Quality over activity', body: 'Not trading every day is often a strength. Strong swings come from waiting for the best structure.' }, { title: '2. Entries and pullbacks', body: 'Strong names often reward patience. Better risk usually comes from calm pullbacks, not emotional chasing.' }, { title: '3. Exit planning', body: 'A trade plan should include partial profit logic, trailing structure, and the point where the idea is no longer valid.' }], quiz: { question: 'A better swing entry often comes from:', options: ['Waiting for a cleaner pullback into support', 'Buying randomly because the chart moved today', 'Ignoring invalidation'], answer: 0, explain: 'Cleaner swing entries usually come when risk is defined and price is entering from a better location, not after emotional chasing.' } },
+      { tag: 'CRYPTO', title: 'Crypto Market Playbook', length: '22:55', intro: 'Study BTC and ETH structure, altcoin rotation, high-volatility risk control, and how to avoid turning fast crypto moves into emotional trades.', meta: ['9 lessons','Intermediate','High volatility'], lessons: [{ title: '1. Market leaders first', body: 'BTC and ETH often shape the tone for the rest of the market. Altcoins are rarely clean if the leaders are unstable.' }, { title: '2. Volatility changes everything', body: 'Crypto can move hard and fast. Position size has to shrink when volatility rises.' }, { title: '3. Avoid overtrading', body: 'Because crypto is always open, traders can burn themselves out. A plan matters even more in 24/7 markets.' }], quiz: { question: 'Why should crypto position size often be smaller?', options: ['Because volatility is higher', 'Because crypto has no charts', 'Because stops are not allowed'], answer: 0, explain: 'Crypto tends to move more aggressively, so smaller size helps keep risk manageable.' } },
+      { tag: 'PSYCHOLOGY', title: 'Risk & Trading Psychology', length: '19:30', intro: 'This path teaches discipline, emotional control, journaling, and why consistent execution matters more than one perfect setup.', meta: ['7 lessons','All levels','Essential'], lessons: [{ title: '1. Emotional drift', body: 'After wins or losses, the mind wants to force the next outcome. Awareness helps interrupt that habit.' }, { title: '2. Journaling', body: 'A real trading journal tracks process, mistakes, and emotional state — not just P&L.' }, { title: '3. Repetition wins', body: 'Consistency comes from repeating a proven process with discipline, not from chasing novelty.' }], quiz: { question: 'What does a strong trading journal focus on?', options: ['Process, mistakes, and emotional patterns', 'Only profit screenshots', 'Nothing except entry price'], answer: 0, explain: 'A good journal helps you improve your decision-making process, not just admire or regret the result.' } }
+    ];
+
+    let activeCourseIndex = 0;
+    function renderCourseList() {
+      const list = document.getElementById('courseList');
+      list.innerHTML = courses.map((course, index) => `
+        <div class="course-item ${index === activeCourseIndex ? 'active' : ''}" data-course="${index}">
+          <span class="course-tag">${course.tag}</span>
+          <h3>${course.title}</h3>
+          <p>${course.intro}</p>
+          <div class="course-meta-row">${course.meta.map(m => `<span>${m}</span>`).join('')}</div>
+        </div>
+      `).join('');
+      document.querySelectorAll('.course-item').forEach(item => {
+        item.addEventListener('click', () => { activeCourseIndex = Number(item.dataset.course); renderCourseList(); renderActiveCourse(); });
+      });
+    }
+
+    function renderActiveCourse() {
+      const course = courses[activeCourseIndex];
+      document.getElementById('courseTag').textContent = course.tag;
+      document.getElementById('courseTitle').textContent = course.title;
+      document.getElementById('courseIntro').textContent = course.intro;
+      document.getElementById('videoTitle').textContent = `${course.title} · Lesson overview video`;
+      document.getElementById('videoLength').textContent = course.length;
+      document.getElementById('lessonBlocks').innerHTML = course.lessons.map(lesson => `<div class="lesson"><h4>${lesson.title}</h4><p>${lesson.body}</p></div>`).join('');
+      document.getElementById('quizQuestion').textContent = course.quiz.question;
+      document.getElementById('quizOptions').innerHTML = course.quiz.options.map((option, idx) => `<button class="quiz-option" data-opt="${idx}">${option}</button>`).join('');
+      document.getElementById('quizFeedback').textContent = '';
+      document.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const picked = Number(btn.dataset.opt);
+          document.querySelectorAll('.quiz-option').forEach((b, idx) => {
+            b.disabled = true;
+            if (idx === course.quiz.answer) b.classList.add('correct');
+            else if (idx === picked) b.classList.add('wrong');
+          });
+          document.getElementById('quizFeedback').textContent = course.quiz.explain;
+        });
+      });
+    }
+
+    const aiAnswers = [
+      { keys: ['start','beginner','new'], answer: 'Start with Trading Foundations first, then move into Risk & Trading Psychology. After that, choose the product you actually want to focus on, like stocks, options, or futures. The goal is to build structure before complexity.' },
+      { keys: ['risk','stop','position','size'], answer: 'A strong trading plan decides risk before entry. Know where the idea is invalid, place the stop there, and size the position so one loss does not damage your account or your mindset.' },
+      { keys: ['options','call','put','theta'], answer: 'Options traders need to understand not just direction, but time and volatility. A simple starting point is learning when a call or put makes sense, then understanding how time decay can still work against you.' },
+      { keys: ['futures','es','nq','leverage'], answer: 'Futures move quickly because leverage is built in. That means execution matters more. You need a clear invalidation point, controlled size, and discipline not to revenge trade after a fast loss.' },
+      { keys: ['crypto','btc','eth'], answer: 'Crypto usually becomes easier to read when you start with BTC and ETH first. If the leaders are unstable, many altcoins become lower-quality trades. In crypto, smaller size often makes more sense because volatility is higher.' },
+      { keys: ['course','learn','study'], answer: 'The full course path on this site is designed to move from foundations into product-specific training. If you are not sure where to begin, Trading Foundations plus Risk & Trading Psychology is the strongest starting combo.' }
+    ];
+
+    function botReply(text) {
+      const lower = text.toLowerCase();
+      const match = aiAnswers.find(item => item.keys.some(k => lower.includes(k)));
+      return match ? match.answer : 'The safest next step is to slow the question down into three parts: market context, entry condition, and risk plan. If you tell me which market you want help with, I can guide you more clearly.';
+    }
+
+    function appendMessage(type, text) {
+      const el = document.createElement('div');
+      el.className = `msg ${type}`;
+      el.textContent = text;
+      const box = document.getElementById('chatBox');
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function sendChat() {
+      const input = document.getElementById('chatInput');
+      const value = input.value.trim();
+      if (!value) return;
+      appendMessage('user', value);
+      input.value = '';
+      setTimeout(() => appendMessage('bot', botReply(value)), 350);
+    }
+    document.getElementById('sendBtn').addEventListener('click', sendChat);
+    document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+    document.getElementById('joinBtn').addEventListener('click', () => {
+      const name = document.getElementById('memberName').value.trim();
+      const email = document.getElementById('memberEmail').value.trim();
+      const plan = document.getElementById('memberPlan').value;
+      const focus = document.getElementById('memberFocus').value;
+      const notes = document.getElementById('memberNotes').value.trim();
+      const to = ['ahmedowais676', '@', 'gmail.com'].join('');
+      const subject = encodeURIComponent(`NEO-Quants Membership Request - ${plan}`);
+      const body = encodeURIComponent(`New membership request\n\nName: ${name || 'Not provided'}\nEmail: ${email || 'Not provided'}\nPlan: ${plan}\nMain focus: ${focus}\n\nNotes:\n${notes || 'None'}`);
+      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    });
+
+    initializeRows();
+    renderTabs();
+    renderRows();
+    renderTicker();
+    renderCourseList();
+    renderActiveCourse();
+    setInterval(animateMarket, 4200);
+  </script>
 </body>
 </html>
